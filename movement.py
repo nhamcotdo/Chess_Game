@@ -37,10 +37,17 @@ def Kk(chessboard, col, row, isMoved):
     li = []
     li = li + Go(chessboard, col, row, liK, isContinue=True)
 
-    if chessboard[row][col].islower():
-        if not (isMoved['k'] or isMoved['r1']) and chessboard[0][1] == ' ' and chessboard[0][2] == ' '  and chessboard[0][3] == ' ':
-            li = li + ()
-
+    if isMoved:
+        if chessboard[row][col].islower():
+            if not (isMoved['k'] or isMoved['r1']) and chessboard[0][1] == ' ' and chessboard[0][2] == ' '  and chessboard[0][3] == ' ':
+                li.append((2, 0))
+            if not (isMoved['k'] or isMoved['r2']) and chessboard[0][5] == ' ' and chessboard[0][6] == ' ':
+                li.append((6, 0))
+        if chessboard[row][col].isupper():
+            if not (isMoved['K'] or isMoved['R1']) and chessboard[7][1] == ' ' and chessboard[7][2] == ' '  and chessboard[7][3] == ' ':
+                li.append((2, 7))
+            if not (isMoved['K'] or isMoved['R2']) and chessboard[7][5] == ' ' and chessboard[7][6] == ' ':
+                li.append((6, 7))
 
     return li
 
@@ -91,10 +98,6 @@ def isFinish(chessboard):
         U = U or ('K' in _)
         L = L or ('k' in _)
     return not (U and L)
-
-def can_castle(chessboard, row, col):
-
-
 
 
 class CurrSelectedPiece:

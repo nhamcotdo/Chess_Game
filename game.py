@@ -32,7 +32,7 @@ class Game:
         piece = self.chess_board[row][col]
 
         if piece != ' ' and piece != 'dot' and piece.islower() == self.isBotTurn:
-            canGos = CanGo(self.chess_board, col, row, self.isBotTurn)
+            canGos = CanGo(self.chess_board, col, row, self.isBotTurn, self.isMoved)
             if canGos:
                 self.curSelectedPiece = CurrSelectedPiece(
                     piece, (col, row), canGos)

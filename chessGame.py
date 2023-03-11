@@ -23,24 +23,38 @@ while running:
             newPos = game.isValidMove(mouse_pos)
             print(game.curSelectedPiece)
             if newPos:
-                newRow, newCol = newPos
-                row, col = game.curSelectedPiece.curPos
-                game.chess_board[col][row] = ' '
+                newCol, newRow = newPos
+                col, row = game.curSelectedPiece.curPos
+                game.chess_board[row][col] = ' '
+                game.chess_board[newRow][newCol] = game.curSelectedPiece.curPiece
                 if game.curSelectedPiece.curPiece in 'kKR1r1R2r2':
                     game.isMoved[game.curSelectedPiece.curPiece] = True
-                game.chess_board[newCol][newRow] = game.curSelectedPiece.curPiece
+
+                if game.curSelectedPiece.curPiece == 'K' and col - newCol == -2:
+                    col1, row1 = 7, 7
+                    newCol, newRow = 5, 7
+                    game.chess_board[newRow][newCol] = game.chess_board[row1][col1]
+                    game.chess_board[row1][col1] = ' '
+
+                if game.curSelectedPiece.curPiece == 'K' and col - newCol == 2:
+                    col1, row1 = 0, 7
+                    newCol, newRow = 2, 7
+                    game.chess_board[newRow][newCol] = game.chess_board[row1][col1]
+                    game.chess_board[row1][col1] = ' '
+
                 game.curSelectedPiece = None
                 game.isBotTurn = not game.isBotTurn
 
         elif game.isBotTurn:
             print('Caculating..........')
-            row, col, newRow, newCol = CPUMiniMaxTurn(game.chess_board, game.isBotTurn)
-            print(row, col, newRow, newCol)
+            col, row, newCol, newRow = CPUMiniMaxTurn(
+                game.chess_board, game.isBotTurn)
+            print(col, row, newCol, newRow)
             game.printBoard()
-            if game.curSelectedPiece.curPiece in 'kKR1r1R2r2':
-                game.isMoved[game.chess_board[row][col]] = True
-            game.chess_board[newRow][newCol] = game.chess_board[row][col]
-            game.chess_board[row][col] = ' '
+            if game.chess_board[col][row] in 'kKR1r1R2r2':
+                game.isMoved[game.chess_board[col][row]] = True
+            game.chess_board[newCol][newRow] = game.chess_board[col][row]
+            game.chess_board[col][row] = ' '
             game.isBotTurn = not game.isBotTurn
             game.printBoard()
     if game.isFinish():

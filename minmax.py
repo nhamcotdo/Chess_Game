@@ -2,7 +2,7 @@ import random
 from game import *
 from cmath import inf
 
-def CPUMiniMaxTurn(board, islower, depth=4):
+def CPUMiniMaxTurn(board, islower, depth=2):
     #######################################################
     #  Nên dùng Minimax với độ sâu từ 2 đến 4             #
     #######################################################
