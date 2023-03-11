@@ -39,12 +39,12 @@ def Kk(chessboard, col, row, isMoved):
 
     if isMoved:
         if chessboard[row][col].islower():
-            if not (isMoved['k'] or isMoved['r1']) and chessboard[0][1] == ' ' and chessboard[0][2] == ' '  and chessboard[0][3] == ' ':
+            if not (isMoved['k'] or isMoved['r1']) and chessboard[0][1] == ' ' and chessboard[0][2] == ' ' and chessboard[0][3] == ' ':
                 li.append((2, 0))
             if not (isMoved['k'] or isMoved['r2']) and chessboard[0][5] == ' ' and chessboard[0][6] == ' ':
                 li.append((6, 0))
         if chessboard[row][col].isupper():
-            if not (isMoved['K'] or isMoved['R1']) and chessboard[7][1] == ' ' and chessboard[7][2] == ' '  and chessboard[7][3] == ' ':
+            if not (isMoved['K'] or isMoved['R1']) and chessboard[7][1] == ' ' and chessboard[7][2] == ' ' and chessboard[7][3] == ' ':
                 li.append((2, 7))
             if not (isMoved['K'] or isMoved['R2']) and chessboard[7][5] == ' ' and chessboard[7][6] == ' ':
                 li.append((6, 7))
@@ -110,14 +110,14 @@ class CurrSelectedPiece:
         return f'curPiece: {self.curPiece} curPos: {self.curPos} canGoList: {self.canGoList}'
 
 
-def CanGoList(chessboard, isLower):
+def CanGoList(chessboard, isLower, isMoved):
     """ return tất cả các nước có thể di chuyển (y,x) -> (y1,x1)"""
     li = []
     for row in range(8):
         for col in range(8):
             piece = chessboard[row][col]
             if piece != ' ' and piece.islower() == isLower:
-                l = CanGo(chessboard, col, row, isLower)
+                l = CanGo(chessboard, col, row, isLower, isMoved)
                 for newCol, newRow in l:
                     li = li + [(row, col, newRow, newCol)]
     return li
@@ -141,3 +141,42 @@ def CanGo(chessboard, col, row, islower, isMoved={}):
     if 'p' in piece.lower():
         return Pp(chessboard, col, row)
     return []
+
+
+def makeMove(chessboard, row, col, newRow, newCol, isMoved):
+    curPiece = chessboard[row][col]
+    chessboard[newRow][newCol] = curPiece
+    chessboard[row][col] = ' '
+
+    if curPiece in 'kKR1r1R2r2':
+        isMoved[curPiece] = True
+
+    #  Quân trắng
+    if curPiece == 'K' and col - newCol == -2:
+        #  Di chuyển quân xe phải để nhập thành
+        row1, col1 = 7, 7
+        newRow, newCol = 7, 5
+        chessboard[newRow][newCol] = chessboard[row1][col1]
+        chessboard[row1][col1] = ' '
+
+    if curPiece == 'K' and col - newCol == 2:
+        #  Di chuyển quân xe trái để nhập thành
+        row1, col1 = 7, 0
+        newRow, newCol = 7, 3
+        chessboard[newRow][newCol] = chessboard[row1][col1]
+        chessboard[row1][col1] = ' '
+
+    #  Quân trắng
+    if curPiece == 'k' and col - newCol == -2:
+        #  Di chuyển quân xe phải để nhập thành
+        row1, col1 = 0, 7
+        newRow, newCol = 0, 2
+        chessboard[newRow][newCol] = chessboard[row1][col1]
+        chessboard[row1][col1] = ' '
+
+    if curPiece == 'k' and col - newCol == 2:
+        #  Di chuyển quân xe trái để nhập thành
+        row1, col1 = 0, 0
+        newRow, newCol = 0, 3
+        chessboard[newRow][newCol] = chessboard[row1][col1]
+        chessboard[row1][col1] = ' '

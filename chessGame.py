@@ -25,38 +25,25 @@ while running:
             if newPos:
                 newCol, newRow = newPos
                 col, row = game.curSelectedPiece.curPos
-                game.chess_board[row][col] = ' '
-                game.chess_board[newRow][newCol] = game.curSelectedPiece.curPiece
-                if game.curSelectedPiece.curPiece in 'kKR1r1R2r2':
-                    game.isMoved[game.curSelectedPiece.curPiece] = True
-
-                if game.curSelectedPiece.curPiece == 'K' and col - newCol == -2:
-                    col1, row1 = 7, 7
-                    newCol, newRow = 5, 7
-                    game.chess_board[newRow][newCol] = game.chess_board[row1][col1]
-                    game.chess_board[row1][col1] = ' '
-
-                if game.curSelectedPiece.curPiece == 'K' and col - newCol == 2:
-                    col1, row1 = 0, 7
-                    newCol, newRow = 2, 7
-                    game.chess_board[newRow][newCol] = game.chess_board[row1][col1]
-                    game.chess_board[row1][col1] = ' '
-
+                game.makeMove(row, col, newRow, newCol)
                 game.curSelectedPiece = None
                 game.isBotTurn = not game.isBotTurn
 
+                game.LastMove[0] = newRow
+                game.LastMove[1] = newCol
+
         elif game.isBotTurn:
             print('Caculating..........')
-            col, row, newCol, newRow = CPUMiniMaxTurn(
-                game.chess_board, game.isBotTurn)
-            print(col, row, newCol, newRow)
-            game.printBoard()
-            if game.chess_board[col][row] in 'kKR1r1R2r2':
-                game.isMoved[game.chess_board[col][row]] = True
-            game.chess_board[newCol][newRow] = game.chess_board[col][row]
-            game.chess_board[col][row] = ' '
+            row, col, newRow, newCol = CPUMiniMaxTurn(
+                game.chess_board, game.isBotTurn, game.isMoved.copy())
+            print(row, col, newCol, newRow)
+            game.makeMove(row, col, newRow, newCol)
             game.isBotTurn = not game.isBotTurn
             game.printBoard()
+
+            game.LastMove[0] = newRow
+            game.LastMove[1] = newCol
+
     if game.isFinish():
         print('You win' if game.isBotTurn else 'Bot win')
         running = False

@@ -7,12 +7,15 @@ screen_height = 640
 # Define some colors
 black = (224, 224, 224)
 white = (255, 255, 255)
+green = (0, 255, 0)
+blue = (0, 125, 125)
 
 # Define the size of each square on the chessboard
 square_size = 80
 
 # Load the chess piece images
 pieces = {}
+pieces_pawn_pro = ["Q", "R1", "B1", "N1"]
 pieces["r1"] = pygame.image.load("images/rook.png")
 pieces["r2"] = pygame.image.load("images/rook.png")
 pieces["n1"] = pygame.image.load("images/knight.png")
