@@ -6,33 +6,29 @@ class Game:
     Bot = True
     LastMove = [-1, -1]
 
-    def __init__(self, isBotFirst=Bot) -> None:
+    def __init__(self, isBotFirst=Bot, chessBoard=[["r1", "n", "b", "q", "k", "b", "n", "r2"],
+                 ["p", "p", "p", "p", "p", "p", "p", "p"],
+                 [" ", " ", " ", " ", " ", " ", " ", " "],
+                 [" ", " ", " ", " ", " ", " ", " ", " "],
+                 [" ", " ", " ", " ", " ", " ", " ", " "],
+                 [" ", " ", " ", " ", " ", " ", " ", " "],
+                 ["P", "P", "P", "P", "P", "P", "P", "P"],
+                 ["R1", "N", "B", "Q", "K", "B", "N", "R2"]]) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         pygame.display.set_caption("Chess Game")
         # bot luôn là chữ thường
-        # self.chess_board = [
-        #     ["r1", "n1", "b1", "q", "k", "b2", "n2", "r2"],
-        #     ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"],
-        #     [" ", " ", " ", " ", " ", " ", " ", " "],
-        #     [" ", " ", " ", " ", " ", " ", " ", " "],
-        #     [" ", " ", " ", " ", " ", " ", " ", " "],
-        #     [" ", " ", " ", " ", " ", " ", " ", " "],
-        #     ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"],
-        #     ["R1", "N1", "B1", "Q", "K", "B2", "N2", "R2"]
-        # ]
-
-        self.chess_board = [
-            ["r1", " ", " ", " ", "k", " ", " ", "r2"],
-            # ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"],
-            ["p1", " ", " ", "Q", " ", " ", "P5", "p1"],
-            [" ", " ", " ", "R1", " ", " ", " ", " "],
-            [" ", " ", " ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", " ", " ", " ", " "],
-            ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"],
-            ["R1", "N1", "B1", "Q", "K", "B2", "N2", "R2"]
-        ]
+        # chessBoard=[
+        #         ["r1", "n", "b", "q", "k", "b", "n", "r2"],
+        #         ["p", "p", "p", "p", "p", "p", "p", "p"],
+        #         [" ", " ", " ", " ", " ", " ", " ", " "],
+        #         [" ", " ", " ", " ", " ", " ", " ", " "],
+        #         [" ", " ", " ", " ", " ", " ", " ", " "],
+        #         [" ", " ", " ", " ", " ", " ", " ", " "],
+        #         ["P", "P", "p", "P", "P", "P", "P", "P"],
+        #         ["R1", "N", "B", "Q", "K", "B", "N", "R2"]]
+        
+        self.chess_board = chessBoard
         self.curSelectedPiece = None
         self.isBotTurn = isBotFirst
         self.isMoved = {'k': False, 'K': False, 'r1': False,
@@ -127,9 +123,8 @@ class Game:
             U = U or ('K' in _)
             L = L or ('k' in _)
         return not (U and L)
-    
 
-    def makeMove(self, row, col, newRow, newCol, pawnPro = ' '):
+    def makeMove(self, row, col, newRow, newCol, pawnPro=' '):
         curPiece = self.chess_board[row][col]
         self.chess_board[newRow][newCol] = curPiece
         self.chess_board[row][col] = ' '
@@ -166,7 +161,7 @@ class Game:
             newRow, newCol = 0, 3
             self.chess_board[newRow][newCol] = self.chess_board[row1][col1]
             self.chess_board[row1][col1] = ' '
-        
+
         if curPiece[0] == 'P' and newRow == 0:
             pawnPro = self.pawnPromotion()
             self.chess_board[newRow][newCol] = pawnPro
@@ -186,7 +181,8 @@ class Game:
                     x, y, square_size, square_size))
                 xP = x + square_size // 2
                 yP = y + square_size // 2
-                self.screen.blit(pieces[pieces_pawn_pro[col]], pieces[pieces_pawn_pro[col]].get_rect(center=(xP, yP)))
+                self.screen.blit(
+                    pieces[pieces_pawn_pro[col]], pieces[pieces_pawn_pro[col]].get_rect(center=(xP, yP)))
         pygame.display.flip()
         running = True
         while running:
@@ -210,4 +206,3 @@ class Game:
                             return pieces_pawn_pro[2]
                         elif x == 5:
                             return pieces_pawn_pro[3]
-

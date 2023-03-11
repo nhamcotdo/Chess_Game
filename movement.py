@@ -59,13 +59,14 @@ def Pp(chessboard, col, row):
     if not chessboard[row][col].islower():
         dx = -1
     # nước có thể đi
-    if row == 1 or row == 6:
+    if row == 1 and chessboard[row][col].islower() or row == 6 and not chessboard[row][col].islower():
         li = li + Go(chessboard, col, row,
                      [(0, dx), (0, 2*dx)], canFight=False)
     else:
         li = li + Go(chessboard, col, row, [(0, dx)], canFight=False)
     # nước có thể ăn (tốt ăn chéo)
-    li = li + Go(chessboard, col, row, [(-1, dx), (1, dx)], needFight=True)
+    li = li + Go(chessboard, col, row,
+                 [(-1, dx), (1, dx)], isContinue=True, needFight=True)
     return li
 
 
@@ -180,6 +181,7 @@ def makeMove(chessboard, row, col, newRow, newCol, isMoved):
         newRow, newCol = 0, 3
         chessboard[newRow][newCol] = chessboard[row1][col1]
         chessboard[row1][col1] = ' '
+
 
 def pawnPromotion(chessboard, row, col, newRow, newCol, pro):
     chessboard[newRow][newCol] = pro

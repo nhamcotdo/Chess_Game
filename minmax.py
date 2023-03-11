@@ -87,6 +87,7 @@ def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': Fals
                     Max = max(Max, Minimax(child, depth -
                                            1, Pmax, not Pnow, isMoved))
             else:
+                child = [_[:] for _ in node]
                 makeMove(child, row, col, newRow, newCol, isMoved)
                 Max = max(Max, Minimax(child, depth -
                           1, Pmax, not Pnow, isMoved))
@@ -94,7 +95,6 @@ def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': Fals
     else:
         Min = inf
         for row, col, newRow, newCol in CanGoList(node, Pnow, isMoved):
-            child = [_[:] for _ in node]
             if 'p' in node[row][col] and row == 6:
                 for pro in pawnPromotions:
                     child = [_[:] for _ in node]
@@ -102,6 +102,7 @@ def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': Fals
                     Min = min(Min, Minimax(child, depth -
                                            1, Pmax, not Pnow, isMoved))
             else:
+                child = [_[:] for _ in node]
                 makeMove(child, row, col, newRow, newCol, isMoved)
                 Min = min(Min, Minimax(child, depth -
                           1, Pmax, not Pnow, isMoved))
