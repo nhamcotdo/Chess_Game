@@ -180,3 +180,7 @@ def makeMove(chessboard, row, col, newRow, newCol, isMoved):
         newRow, newCol = 0, 3
         chessboard[newRow][newCol] = chessboard[row1][col1]
         chessboard[row1][col1] = ' '
+
+def pawnPromotion(chessboard, row, col, newRow, newCol, pro):
+    chessboard[newRow][newCol] = pro
+    chessboard[row][col] = ' '

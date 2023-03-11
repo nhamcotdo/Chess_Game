@@ -21,14 +21,16 @@ class Game:
         #     ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"],
         #     ["R1", "N1", "B1", "Q", "K", "B2", "N2", "R2"]
         # ]
+
         self.chess_board = [
-            [" ", " ", " ", " ", "k", " ", " ", " "],
-            ["P1", " ", " ", " ", "p5", "p6", "p7", "p8"],
+            ["r1", " ", " ", " ", "k", " ", " ", "r2"],
+            # ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"],
+            ["p1", " ", " ", "Q", " ", " ", "P5", "p1"],
+            [" ", " ", " ", "R1", " ", " ", " ", " "],
             [" ", " ", " ", " ", " ", " ", " ", " "],
             [" ", " ", " ", " ", " ", " ", " ", " "],
             [" ", " ", " ", " ", " ", " ", " ", " "],
-            [" ", " ", " ", " ", " ", " ", " ", " "],
-            [" ", "P2", "P3", "P4", "P5", "P6", "P7", "P8"],
+            ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"],
             ["R1", "N1", "B1", "Q", "K", "B2", "N2", "R2"]
         ]
         self.curSelectedPiece = None
@@ -127,7 +129,7 @@ class Game:
         return not (U and L)
     
 
-    def makeMove(self, row, col, newRow, newCol):
+    def makeMove(self, row, col, newRow, newCol, pawnPro = ' '):
         curPiece = self.chess_board[row][col]
         self.chess_board[newRow][newCol] = curPiece
         self.chess_board[row][col] = ' '
@@ -154,7 +156,7 @@ class Game:
         if curPiece == 'k' and col - newCol == -2:
             #  Di chuyển quân xe phải để nhập thành
             row1, col1 = 0, 7
-            newRow, newCol = 0, 2
+            newRow, newCol = 0, 5
             self.chess_board[newRow][newCol] = self.chess_board[row1][col1]
             self.chess_board[row1][col1] = ' '
 
@@ -167,6 +169,9 @@ class Game:
         
         if curPiece[0] == 'P' and newRow == 0:
             pawnPro = self.pawnPromotion()
+            self.chess_board[newRow][newCol] = pawnPro
+
+        if curPiece[0] == 'p' and newRow == 7:
             self.chess_board[newRow][newCol] = pawnPro
 
     def pawnPromotion(self):

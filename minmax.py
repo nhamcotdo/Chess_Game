@@ -2,20 +2,37 @@ import random
 from game import *
 from cmath import inf
 
+pawnPromotions = ['r', 'n', 'q', 'b']
 
-def CPUMiniMaxTurn(board, islower, isMoved, depth=2 ):
+
+def CPUMiniMaxTurn(board, islower, isMoved, depth=2):
     #######################################################
     #  Nên dùng Minimax với độ sâu từ 2 đến 4             #
     #######################################################
     li = CanGoList(board, islower, isMoved)
     Max = -inf
+
     for row, col, newRow, newCol in li:
-        child = [_[:] for _ in board]
-        makeMove(child, row, col, newRow, newCol, isMoved)
-        vl = Minimax(child, depth-1, islower, not islower, isMoved.copy())
-        if Max < vl or (Max == vl and random.choice([0, 1]) == 0):
-            Max = vl
-            r = (row, col, newRow, newCol)
+        if 'p' in board[row][col] and row == 6:
+            for pawnPro in pawnPromotions:
+                child = [_[:] for _ in board]
+
+                pawnPromotion(child, row, col, newRow, newCol, pawnPro)
+                vl = Minimax(child, depth-1, islower,
+                             not islower, isMoved.copy())
+                if Max < vl or (Max == vl and random.choice([0, 1]) == 0):
+                    Max = vl
+                    r = (row, col, newRow, newCol, pawnPro)
+        else:
+            child = [_[:] for _ in board]
+
+            makeMove(child, row, col, newRow, newCol, isMoved)
+            vl = Minimax(child, depth-1, islower,
+                         not islower, isMoved.copy())
+            if Max < vl or (Max == vl and random.choice([0, 1]) == 0):
+                Max = vl
+                r = (row, col, newRow, newCol, ' ')
+
     print(Max)
     return r
 
@@ -56,22 +73,36 @@ def value(board, isLower):
 
 
 def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': False,
-                                                     'R1': False, 'r2': False, 'R2': False}):
+                                              'R1': False, 'r2': False, 'R2': False}):
+
     if isFinish(node) or depth == 0:
         return value(node, Pmax)
     if Pmax == Pnow:
         Max = -inf
         for row, col, newRow, newCol in CanGoList(node, Pnow, isMoved):
-            child = [_[:] for _ in node]
-            makeMove(child, row, col, newRow, newCol, isMoved)
-            Max = max(Max, Minimax(child, depth-1, Pmax, not Pnow, isMoved))
+            if 'p' in node[row][col] and row == 6:
+                for pro in pawnPromotions:
+                    child = [_[:] for _ in node]
+                    pawnPromotion(child, row, col, newRow, newCol, pro)
+                    Max = max(Max, Minimax(child, depth -
+                                           1, Pmax, not Pnow, isMoved))
+            else:
+                makeMove(child, row, col, newRow, newCol, isMoved)
+                Max = max(Max, Minimax(child, depth -
+                          1, Pmax, not Pnow, isMoved))
         return Max
     else:
         Min = inf
         for row, col, newRow, newCol in CanGoList(node, Pnow, isMoved):
             child = [_[:] for _ in node]
-            # child[newRow][newCol] = child[row][col]
-            # child[row][col] = ' '
-            makeMove(child, row, col, newRow, newCol, isMoved)
-            Min = min(Min, Minimax(child, depth-1, Pmax, not Pnow, isMoved))
+            if 'p' in node[row][col] and row == 6:
+                for pro in pawnPromotions:
+                    child = [_[:] for _ in node]
+                    pawnPromotion(child, row, col, newRow, newCol, pro)
+                    Min = min(Min, Minimax(child, depth -
+                                           1, Pmax, not Pnow, isMoved))
+            else:
+                makeMove(child, row, col, newRow, newCol, isMoved)
+                Min = min(Min, Minimax(child, depth -
+                          1, Pmax, not Pnow, isMoved))
         return Min

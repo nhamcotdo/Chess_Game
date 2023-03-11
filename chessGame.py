@@ -34,10 +34,10 @@ while running:
 
         elif game.isBotTurn:
             print('Caculating..........')
-            row, col, newRow, newCol = CPUMiniMaxTurn(
-                game.chess_board, game.isBotTurn, game.isMoved.copy())
-            print(row, col, newCol, newRow)
-            game.makeMove(row, col, newRow, newCol)
+            row, col, newRow, newCol, pawnPro = CPUMiniMaxTurn(
+                game.chess_board.copy(), game.isBotTurn, game.isMoved.copy())
+            print(row, col, newCol, newRow, pawnPro)
+            game.makeMove(row, col, newRow, newCol, pawnPro)
             game.isBotTurn = not game.isBotTurn
             game.printBoard()
 
