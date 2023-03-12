@@ -19,7 +19,7 @@ with open("./moves_cache.json", "r") as f:
         cache_moves = {'lower': {}, 'upper': {}, 'eval': {}}
 
 
-def CPUMiniMaxTurn(board, islower, isMoved, depth=3):
+def CPUMiniMaxTurn(board, islower, isMoved, depth=4):
     global totalNode
     global totalNodeInCache
     global cache_moves
@@ -75,13 +75,15 @@ def CPUMiniMaxTurn(board, islower, isMoved, depth=3):
     return r
 
 def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': False,
-                                              'R1': False, 'r2': False, 'R2': False}):
+                                              'R1': False, 'r2': False, 'R2': False}, alpha=-inf, beta=inf):
     """
     node là node hiện tại
     depth là độ sâu
     Pmax là player cần tìm Max
-    Pnow là player hiện tại\m
+    Pnow là player hiện tại
     isMoved dùng để kiểm tra các quân xe, vua có di chuyển hay chưa để nhập thành
+    alpha là giá trị tốt nhất của người chơi maximizing (mặc định là -inf)
+    beta là giá trị tốt nhất của người chơi minimizing (mặc định là inf)
     """
     global totalNode
     global ab_Max
@@ -97,20 +99,19 @@ def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': Fals
                 for pro in pawnPromotions:
                     child = [_[:] for _ in node]
                     pawnPromotion(child, row, col, newRow, newCol, pro)
-                    Max = max(Max, Minimax(child, depth -
-                                           1, Pmax, not Pnow, isMoved))
+                    Max = max(Max, Minimax(child, depth - 1, Pmax, not Pnow, isMoved, alpha, beta))
+                    alpha = max(alpha, Max)
+                    if beta <= alpha:
+                        break
             else:
                 child = [_[:] for _ in node]
                 makeMove(child, row, col, newRow, newCol, isMoved)
-                rsl_minimax = Minimax(child, depth - 1, Pmax, not Pnow, isMoved)
-                # Cắt tỉa nhánh min-max-min alpha
-                if rsl_minimax >= ab_Max + 20:
-                    return rsl_minimax
-                
+                rsl_minimax = Minimax(child, depth - 1, Pmax, not Pnow, isMoved, alpha, beta)
                 Max = max(Max, rsl_minimax)
-        if Max < ab_Max:
-            ab_Max = Max
-            ab_Min = -inf
+                alpha = max(alpha, Max)
+                if beta <= alpha:
+                    break
+  
         return Max
     else:
         Min = inf
@@ -119,17 +120,18 @@ def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': Fals
                 for pro in pawnPromotions:
                     child = [_[:] for _ in node]
                     pawnPromotion(child, row, col, newRow, newCol, pro)
-                    Min = min(Min, Minimax(child, depth -
-                                           1, Pmax, not Pnow, isMoved))
+                    Min = min(Min, Minimax(child, depth - 1, Pmax, not Pnow, isMoved, alpha, beta))
+                    beta = min(beta, Min)
+                    if beta <= alpha:
+                        break
             else:
                 child = [_[:] for _ in node]
                 makeMove(child, row, col, newRow, newCol, isMoved)
-                rsl_minimax = Minimax(child, depth - 1, Pmax, not Pnow, isMoved)
-                # Cắt tỉa nhánh max-min-max beta
-                if rsl_minimax + 20<= ab_Min:
-                    return rsl_minimax
+                rsl_minimax = Minimax(child, depth - 1, Pmax, not Pnow, isMoved, alpha, beta)
                 Min = min(Min, rsl_minimax)
-        if Min > ab_Min:
-            ab_Max = inf
-            ab_Min = Min
+                beta = min(beta, Min)
+                if beta <= alpha:
+                    break
+
         return Min
+
