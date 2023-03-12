@@ -6,7 +6,6 @@ from time import time
 from reward import *
 
 
-
 pawnPromotions = ['r', 'n', 'q', 'b']
 cache_moves = {}
 with open("./moves_cache.json", "r") as f:
@@ -19,7 +18,7 @@ with open("./moves_cache.json", "r") as f:
         cache_moves = {'lower': {}, 'upper': {}, 'eval': {}}
 
 
-def CPUMiniMaxTurn(board, islower, isMoved, depth=3):
+def CPUMiniMaxTurn(board, islower, isMoved, depth=2, position={}):
     global totalNode
     global totalNodeInCache
     global cache_moves
@@ -29,36 +28,36 @@ def CPUMiniMaxTurn(board, islower, isMoved, depth=3):
     ab_Max = inf
     ab_Min = -inf
 
-
     startTime = time()
     totalNode = 0
     totalNodeInCache = 0
 
     label = 'lower' if islower else 'upper'
-    li = CanGoList(board, islower, isMoved)
+    li = CanGoList(board, islower, isMoved, position=position)
     Max = -inf
 
     cache = cache_moves[label].get(re.sub(
         '(\[)|(\])|(")|( )', '', json.dumps(board)))
-    if cache:
-        return cache[0]
+    # if cache:
+    #     return cache[0]
 
     for row, col, newRow, newCol in li:
+        clonePosition = position.copy()
         if 'p' in board[row][col] and row == 6:
             for pawnPro in pawnPromotions:
                 child = [_[:] for _ in board]
 
                 pawnPromotion(child, row, col, newRow, newCol, pawnPro)
                 vl = Minimax(child, depth-1, islower,
-                             not islower, isMoved.copy())
+                             not islower, isMoved.copy(), position=clonePosition)
                 if Max < vl or (Max == vl and random.choice([0, 1]) == 0):
                     Max = vl
                     r = (row, col, newRow, newCol, pawnPro)
         else:
             child = [_[:] for _ in board]
-            makeMove(child, row, col, newRow, newCol, isMoved)
+            makeMove(child, row, col, newRow, newCol, isMoved, clonePosition)
             vl = Minimax(child, depth-1, islower,
-                         not islower, isMoved.copy())
+                         not islower, isMoved.copy(), position=clonePosition)
             if Max < vl or (Max == vl and random.choice([0, 1]) == 0):
                 Max = vl
                 r = (row, col, newRow, newCol, ' ')
@@ -74,14 +73,17 @@ def CPUMiniMaxTurn(board, islower, isMoved, depth=3):
     print('Max:', Max)
     return r
 
+
 def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': False,
-                                              'R1': False, 'r2': False, 'R2': False}):
+                                              'R1': False, 'r2': False, 'R2': False}, position={}, alpha=-inf, beta=inf):
     """
     node là node hiện tại
     depth là độ sâu
     Pmax là player cần tìm Max
-    Pnow là player hiện tại\m
+    Pnow là player hiện tại
     isMoved dùng để kiểm tra các quân xe, vua có di chuyển hay chưa để nhập thành
+    alpha là giá trị tốt nhất của người chơi maximizing (mặc định là -inf)
+    beta là giá trị tốt nhất của người chơi minimizing (mặc định là inf)
     """
     global totalNode
     global ab_Max
@@ -89,47 +91,58 @@ def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': Fals
 
     totalNode += 1
     if isFinish(node) or depth == 0:
-        return reward(node, Pmax)
+        return reward(node, Pmax, position=position)
     if Pmax == Pnow:
         Max = -inf
-        for row, col, newRow, newCol in CanGoList(node, Pnow, isMoved):
+        for row, col, newRow, newCol in CanGoList(node, Pnow, isMoved, position=position):
             if 'p' in node[row][col] and row == 6:
                 for pro in pawnPromotions:
                     child = [_[:] for _ in node]
-                    pawnPromotion(child, row, col, newRow, newCol, pro)
-                    Max = max(Max, Minimax(child, depth -
-                                           1, Pmax, not Pnow, isMoved))
+                    clonePosition = position.copy()
+                    pawnPromotion(child, row, col, newRow, newCol,
+                                  pro, position=clonePosition)
+                    Max = max(Max, Minimax(child, depth - 1, Pmax,
+                              not Pnow, isMoved, clonePosition, alpha, beta))
+                    alpha = max(alpha, Max)
+                    if beta <= alpha:
+                        break
             else:
                 child = [_[:] for _ in node]
-                makeMove(child, row, col, newRow, newCol, isMoved)
-                rsl_minimax = Minimax(child, depth - 1, Pmax, not Pnow, isMoved)
-                # Cắt tỉa nhánh min-max-min alpha
-                if rsl_minimax >= ab_Max + 20:
-                    return rsl_minimax
-                
+                clonePosition = position.copy()
+                makeMove(child, row, col, newRow, newCol,
+                         isMoved, position=clonePosition)
+                rsl_minimax = Minimax(
+                    child, depth - 1, Pmax, not Pnow, isMoved, position.copy(), alpha, beta)
                 Max = max(Max, rsl_minimax)
-        if Max < ab_Max:
-            ab_Max = Max
-            ab_Min = -inf
+                alpha = max(alpha, Max)
+                if beta <= alpha:
+                    break
+
         return Max
     else:
         Min = inf
-        for row, col, newRow, newCol in CanGoList(node, Pnow, isMoved):
+        for row, col, newRow, newCol in CanGoList(node, Pnow, isMoved, position=position):
             if 'p' in node[row][col] and row == 6:
                 for pro in pawnPromotions:
                     child = [_[:] for _ in node]
-                    pawnPromotion(child, row, col, newRow, newCol, pro)
-                    Min = min(Min, Minimax(child, depth -
-                                           1, Pmax, not Pnow, isMoved))
+                    clonePosition = position.copy()
+                    pawnPromotion(child, row, col, newRow, newCol,
+                                  pro, position=clonePosition)
+                    Min = min(Min, Minimax(child, depth - 1, Pmax,
+                              not Pnow, isMoved,  position, alpha, beta))
+                    beta = min(beta, Min)
+                    if beta <= alpha:
+                        break
             else:
                 child = [_[:] for _ in node]
-                makeMove(child, row, col, newRow, newCol, isMoved)
-                rsl_minimax = Minimax(child, depth - 1, Pmax, not Pnow, isMoved)
-                # Cắt tỉa nhánh max-min-max beta
-                if rsl_minimax + 20<= ab_Min:
-                    return rsl_minimax
+                clonePosition = position.copy()
+                makeMove(child, row, col, newRow, newCol,
+                         isMoved, position=clonePosition)
+                rsl_minimax = Minimax(
+                    child, depth - 1, Pmax, not Pnow, isMoved, clonePosition, alpha, beta)
                 Min = min(Min, rsl_minimax)
-        if Min > ab_Min:
-            ab_Max = inf
-            ab_Min = Min
+                beta = min(beta, Min)
+                if beta <= alpha:
+                    break
+
         return Min

@@ -72,7 +72,7 @@ kingUpper = np.array([[-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
 kingLower = kingUpper[::-1]
 
 
-def reward(board, isLower):
+def reward(board, isLower, position={}):
     global totalNodeInCache
     global totalNode
 
@@ -85,9 +85,9 @@ def reward(board, isLower):
     #     return cache
 
     totalPoints = 0
-    totalPoints += value(board, isLower) * 10
-    totalPoints += matchStatus(board, isLower) * 3 + \
-        matchStatus(board, not isLower) * 2
+    totalPoints += value(board, isLower) 
+    totalPoints += matchStatus(board, isLower, position) * 10 + \
+        matchStatus(board, not isLower, position) * 10
 
     # cache_moves['eval'][re.sub(
     #         '(\[)|(\])|(")|( )', '', json.dumps(board))] = totalPoints
@@ -108,36 +108,36 @@ def value(board, isLower):
             if c == ' ':
                 continue
             if 'p' in c.lower():
-                val += 1 + \
+                val += 10 + \
                     pawnlower[y][x] if c.islower() == isLower else - \
-                    1 - pawnUpper[y][x]
+                    10 - pawnUpper[y][x]
 
             elif 'n' in c.lower():
-                val += 3 + \
+                val += 30 + \
                     knightEval[y][x] if c.islower() == isLower else - \
-                    3 - knightEval[y][x]
+                    30 - knightEval[y][x]
             elif 'b' in c.lower():
-                val += 3 + \
+                val += 30 + \
                     bishoplower[y][x] if c.islower() == isLower else - \
-                    3 - bishopUpper[y][x]
+                    30 - bishopUpper[y][x]
             elif 'r' in c.lower():
-                val += 5 + \
+                val += 50 + \
                     rooklower[y][x] if c.islower() == isLower else - \
-                    5 - rookUpper[y][x]
+                    50 - rookUpper[y][x]
             elif 'q' in c.lower():
-                val += 20 + \
+                val += 90 + \
                     evalQueen[y][x] if c.islower() == isLower else - \
-                    20 - evalQueen[y][x]
+                    90 - evalQueen[y][x]
             elif 'k' in c.lower():
-                val += 1000 + \
+                val += 9000 + \
                     kingLower[y][x] if c.islower() == isLower else - \
-                    1000 - kingUpper[y][x]
+                    9000 - kingUpper[y][x]
             else:
                 print('Unknown piece:', c)
     return val
 
 
-def matchStatus(board, isLower):
+def matchStatus(board, isLower, position={}):
     """
     return:
     0: NORMAL
@@ -157,7 +157,7 @@ def matchStatus(board, isLower):
                 break
 
     enermyList = set([(newCol, newRow) for x, y, newRow, newCol in CanGoList(
-        chessboard=board, isLower=not isLower)])
+        chessboard=board, isLower=not isLower, position=position)])
 
     canGosOfKing = canGosOfKing.difference(enermyList)
 

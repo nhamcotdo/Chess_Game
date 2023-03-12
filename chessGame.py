@@ -1,7 +1,7 @@
 from minmax import *
 from game import *
 
-game = Game(False)
+game = Game(True)
 
 # Game loop
 running = True
@@ -35,8 +35,9 @@ while running:
         elif game.isBotTurn:
             print('Caculating..........')
             row, col, newRow, newCol, pawnPro = CPUMiniMaxTurn(
-                game.chess_board.copy(), game.isBotTurn, game.isMoved.copy())
-            print(row, col, newCol, newRow, pawnPro)
+                game.chess_board.copy(), game.isBotTurn, game.isMoved.copy(), position=game.pos.copy())
+            # print(row, col, newCol, newRow, pawnPro)
+            print(game.pos)
             game.makeMove(row, col, newRow, newCol, pawnPro)
             game.isBotTurn = not game.isBotTurn
             game.printBoard()
