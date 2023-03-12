@@ -19,7 +19,7 @@ with open("./moves_cache.json", "r") as f:
         cache_moves = {'lower': {}, 'upper': {}, 'eval': {}}
 
 
-def CPUMiniMaxTurn(board, islower, isMoved, depth=4):
+def CPUMiniMaxTurn(board, islower, isMoved, depth=3):
     global totalNode
     global totalNodeInCache
     global cache_moves
@@ -71,6 +71,7 @@ def CPUMiniMaxTurn(board, islower, isMoved, depth=4):
     print('Total nodes', totalNode)
     print('Total nodes found in cache', totalNodeInCache)
     print('Time:', time() - startTime)
+    print('Max:', Max)
     return r
 
 def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': False,
@@ -103,8 +104,9 @@ def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': Fals
                 makeMove(child, row, col, newRow, newCol, isMoved)
                 rsl_minimax = Minimax(child, depth - 1, Pmax, not Pnow, isMoved)
                 # Cắt tỉa nhánh min-max-min alpha
-                if rsl_minimax >= ab_Max:
+                if rsl_minimax >= ab_Max + 20:
                     return rsl_minimax
+                
                 Max = max(Max, rsl_minimax)
         if Max < ab_Max:
             ab_Max = Max
@@ -124,7 +126,7 @@ def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': Fals
                 makeMove(child, row, col, newRow, newCol, isMoved)
                 rsl_minimax = Minimax(child, depth - 1, Pmax, not Pnow, isMoved)
                 # Cắt tỉa nhánh max-min-max beta
-                if rsl_minimax <= ab_Min:
+                if rsl_minimax + 20<= ab_Min:
                     return rsl_minimax
                 Min = min(Min, rsl_minimax)
         if Min > ab_Min:
