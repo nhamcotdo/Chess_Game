@@ -117,16 +117,15 @@ class CurrSelectedPiece:
         return f'curPiece: {self.curPiece} curPos: {self.curPos} canGoList: {self.canGoList}'
 
 
-def CanGoList(chessboard, isLower, isMoved={}):
+def CanGoList(chessboard, isLower, isMoved={},position={}):
     """ return tất cả các nước có thể di chuyển (y,x) -> (y1,x1)"""
     li = []
-    for row in range(8):
-        for col in range(8):
-            piece = chessboard[row][col]
-            if piece != ' ' and piece.islower() == isLower:
-                l = CanGo(chessboard, col, row, isLower, isMoved)
-                for newCol, newRow in l:
-                    li = li + [(row, col, newRow, newCol)]
+    for piece, v in position.items():
+        row, col = v[0], v[1]
+        if piece != ' ' and piece.islower() == isLower:
+            l = CanGo(chessboard, col, row, isLower, isMoved)
+            for newCol, newRow in l:
+                li = li + [(row, col, newRow, newCol)]
     return li
 
 
@@ -150,9 +149,13 @@ def CanGo(chessboard, col, row, isLower, isMoved={}):
     return []
 
 
-def makeMove(chessboard, row, col, newRow, newCol, isMoved):
+def makeMove(chessboard, row, col, newRow, newCol, isMoved, position={}):
     curPiece = chessboard[row][col]
+    if position.get(chessboard[newRow][newCol]):
+        position.pop(chessboard[newRow][newCol])
+
     chessboard[newRow][newCol] = curPiece
+    position[curPiece] = (newRow, newCol)
     chessboard[row][col] = ' '
 
     if curPiece in 'kKR1r1R2r2':
@@ -164,6 +167,7 @@ def makeMove(chessboard, row, col, newRow, newCol, isMoved):
         row1, col1 = 7, 7
         newRow, newCol = 7, 5
         chessboard[newRow][newCol] = chessboard[row1][col1]
+        position[chessboard[row1][col1]] = (newRow, newCol)
         chessboard[row1][col1] = ' '
 
     if curPiece == 'K' and col - newCol == 2:
@@ -171,6 +175,7 @@ def makeMove(chessboard, row, col, newRow, newCol, isMoved):
         row1, col1 = 7, 0
         newRow, newCol = 7, 3
         chessboard[newRow][newCol] = chessboard[row1][col1]
+        position[chessboard[row1][col1]] = (newRow, newCol)
         chessboard[row1][col1] = ' '
 
     #  Quân trắng
@@ -179,6 +184,7 @@ def makeMove(chessboard, row, col, newRow, newCol, isMoved):
         row1, col1 = 0, 7
         newRow, newCol = 0, 2
         chessboard[newRow][newCol] = chessboard[row1][col1]
+        position[chessboard[row1][col1]] = (newRow, newCol)
         chessboard[row1][col1] = ' '
 
     if curPiece == 'k' and col - newCol == 2:
@@ -186,9 +192,17 @@ def makeMove(chessboard, row, col, newRow, newCol, isMoved):
         row1, col1 = 0, 0
         newRow, newCol = 0, 3
         chessboard[newRow][newCol] = chessboard[row1][col1]
+        position[chessboard[row1][col1]] = (newRow, newCol)
         chessboard[row1][col1] = ' '
 
 
-def pawnPromotion(chessboard, row, col, newRow, newCol, pro):
-    chessboard[newRow][newCol] = pro
+def pawnPromotion(chessboard, row, col, newRow, newCol, pro, position={}):
+    chessboard[newRow][newCol] = pro        
+    if position.get(pro):
+        pro = pro + '1'
+    
+    position[pro] = (newRow, newCol)
+    if position.get(chessboard[row][col]):
+        position.pop(chessboard[row][col])
+    
     chessboard[row][col] = ' '

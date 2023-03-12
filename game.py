@@ -7,33 +7,40 @@ class Game:
     Bot = True
     LastMove = [-1, -1]
 
-    def __init__(self, isBotFirst=Bot, chessBoard=[["r1", "n", "b", "q", "k", "b", "n", "r2"],
-                 ["p", "p", "p", "p", "p", "p", "p", "p"],
+    def __init__(self, isBotFirst=Bot, chessBoard=[["r1", "n1", "b1", "q", "k", "b2", "n2", "r2"],
+                 ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"],
                  [" ", " ", " ", " ", " ", " ", " ", " "],
                  [" ", " ", " ", " ", " ", " ", " ", " "],
                  [" ", " ", " ", " ", " ", " ", " ", " "],
                  [" ", " ", " ", " ", " ", " ", " ", " "],
-                 ["P", "P", "P", "P", "P", "P", "P", "P"],
-                 ["R1", "N", "B", "Q", "K", "B", "N", "R2"]]) -> None:
+                 ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P9"],
+                 ["R1", "N1", "B1", "Q", "K", "B2", "N2", "R2"]]) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         pygame.display.set_caption("Chess Game")
         # bot luôn là chữ thường
         # chessBoard=[
-        #         ["r1", "n", "b", "q", "k", "b", "n", "r2"],
-        #         ["p", "p", "p", "p", "p", "p", "p", "p"],
+        #         ["r1", " ", " ", " ", "k", " ", " ", "r2"],
         #         [" ", " ", " ", " ", " ", " ", " ", " "],
         #         [" ", " ", " ", " ", " ", " ", " ", " "],
         #         [" ", " ", " ", " ", " ", " ", " ", " "],
         #         [" ", " ", " ", " ", " ", " ", " ", " "],
-        #         ["P", "P", "p", "P", "P", "P", "P", "P"],
-        #         ["R1", "N", "B", "Q", "K", "B", "N", "R2"]]
-        
+        #         [" ", " ", " ", " ", " ", " ", " ", " "],
+        #         [" ", " ", " ", " ", " ", " ", " ", " "],
+        #         [" ", " ", " ", " ", "K", " ", " ", " "]]
+        self.pos = {}
         self.chess_board = chessBoard
         self.curSelectedPiece = None
         self.isBotTurn = isBotFirst
         self.isMoved = {'k': False, 'K': False, 'r1': False,
                         'R1': False, 'r2': False, 'R2': False}
+        
+        for row in range(8):
+            for col in range(8):
+                piece = self.chess_board[row][col]
+                if piece != ' ':
+                    self.pos[piece] = (row, col)
+
 
     def checkClickPosition(self, mouse_pos):
         x, y = mouse_pos
@@ -89,8 +96,8 @@ class Game:
                 if piece != " ":
                     x = col * square_size + square_size // 2
                     y = row * square_size + square_size // 2
-                    self.screen.blit(pieces[piece],
-                                     pieces[piece].get_rect(center=(x, y)))
+                    self.screen.blit(pieces[piece[0]],
+                                     pieces[piece[0]].get_rect(center=(x, y)))
 
     def draw_canGo(self):
         if not self.curSelectedPiece:
@@ -127,7 +134,10 @@ class Game:
 
     def makeMove(self, row, col, newRow, newCol, pawnPro=' '):
         curPiece = self.chess_board[row][col]
+        if self.pos.get(self.chess_board[newRow][newCol]):
+            self.pos.pop(self.chess_board[newRow][newCol])
         self.chess_board[newRow][newCol] = curPiece
+        self.pos[curPiece] = (newRow, newCol)
         self.chess_board[row][col] = ' '
 
         if curPiece in 'kKR1r1R2r2':
@@ -146,6 +156,7 @@ class Game:
             row1, col1 = 7, 0
             newRow, newCol = 7, 3
             self.chess_board[newRow][newCol] = self.chess_board[row1][col1]
+            self.pos[self.chess_board[row1][col1]] = (newRow, newCol)
             self.chess_board[row1][col1] = ' '
 
         #  Quân trắng
@@ -154,6 +165,7 @@ class Game:
             row1, col1 = 0, 7
             newRow, newCol = 0, 5
             self.chess_board[newRow][newCol] = self.chess_board[row1][col1]
+            self.pos[self.chess_board[row1][col1]] = (newRow, newCol)
             self.chess_board[row1][col1] = ' '
 
         if curPiece == 'k' and col - newCol == 2:
@@ -161,6 +173,7 @@ class Game:
             row1, col1 = 0, 0
             newRow, newCol = 0, 3
             self.chess_board[newRow][newCol] = self.chess_board[row1][col1]
+            self.pos[self.chess_board[row1][col1]] = (newRow, newCol)
             self.chess_board[row1][col1] = ' '
 
         if curPiece[0] == 'P' and newRow == 0:
