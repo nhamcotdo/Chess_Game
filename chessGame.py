@@ -14,14 +14,14 @@ while running:
             # Check if the user released the mouse button while dragging the piece
             mouse_pos = pygame.mouse.get_pos()
             x, y = mouse_pos
-            print(x // square_size, y // square_size)
+            # print(x // square_size, y // square_size)
             canGoList = game.checkClickPosition(mouse_pos)
-            print(canGoList, game.curSelectedPiece)
+            # print(canGoList, game.curSelectedPiece)
 
         elif not game.isBotTurn and game.curSelectedPiece and event.type == pygame.MOUSEBUTTONUP:
             mouse_pos = pygame.mouse.get_pos()
             newPos = game.isValidMove(mouse_pos)
-            print(game.curSelectedPiece)
+            # print(game.curSelectedPiece)
             if newPos:
                 newCol, newRow = newPos
                 col, row = game.curSelectedPiece.curPos
