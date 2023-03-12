@@ -1,5 +1,5 @@
-import pygame
 from minmax import *
+from game import *
 
 game = Game(False)
 

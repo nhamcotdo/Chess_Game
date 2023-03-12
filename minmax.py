@@ -1,16 +1,39 @@
 import random
-from game import *
 from cmath import inf
+import json
+import re
+from time import time
+from reward import *
+
+
 
 pawnPromotions = ['r', 'n', 'q', 'b']
+cache_moves = {}
+with open("./moves_cache.json", "r") as f:
+    try:
+        cache_moves = json.load(f)
+        # if the file is empty the ValueError will be thrown
+    except ValueError:
+        cache_moves = {'lower': {}, 'upper': {}, 'eval': {}}
 
 
-def CPUMiniMaxTurn(board, islower, isMoved, depth=2):
-    #######################################################
-    #  Nên dùng Minimax với độ sâu từ 2 đến 4             #
-    #######################################################
+def CPUMiniMaxTurn(board, islower, isMoved, depth=4):
+    global totalNode
+    global totalNodeInCache
+    global cache_moves
+
+    startTime = time()
+    totalNode = 0
+    totalNodeInCache = 0
+
+    label = 'lower' if islower else 'upper'
     li = CanGoList(board, islower, isMoved)
     Max = -inf
+
+    cache = cache_moves[label].get(re.sub(
+        '(\[)|(\])|(")|( )', '', json.dumps(board)))
+    if cache:
+        return cache[0]
 
     for row, col, newRow, newCol in li:
         if 'p' in board[row][col] and row == 6:
@@ -33,50 +56,30 @@ def CPUMiniMaxTurn(board, islower, isMoved, depth=2):
                 Max = vl
                 r = (row, col, newRow, newCol, ' ')
 
-    print(Max)
+    with open("./moves_cache.json", "w") as f:
+        cache_moves[label][re.sub(
+            '(\[)|(\])|(")|( )', '', json.dumps(board))] = (r, Max)
+        json.dump(cache_moves, f)
+
+    print('Total nodes', totalNode)
+    print('Total nodes found in cache', totalNodeInCache)
+    print('Time:', time() - startTime)
     return r
-
-# Board: Bàn cờ hiện tại
-# islower: lượt của quân viết thường (True) hay quân viết hoa (False)
-# return: giá trị của bàn cờ đối với quân viết thường
-
-
-def value(board, isLower):
-    val = 0
-    for y in range(8):
-        for x in range(8):
-            c = board[y][x]
-            if c == ' ':
-                continue
-            if 'p' in c.lower():
-                val += 1 if c.islower() == isLower else -1
-                if (c.islower() == isLower and y == 1) or (not c.islower() == isLower and y == 6):
-                    val += 5 if c.islower() == isLower else -5
-            elif 'n' in c.lower():
-                val += 3 if c.islower() == isLower else -3
-            elif 'b' in c.lower():
-                val += 3 if c.islower() == isLower else -3
-            elif 'r' in c.lower():
-                val += 5 if c.islower() == isLower else -5
-            elif 'q' in c.lower():
-                val += 20 if c.islower() == isLower else -20
-            elif 'k' in c.lower():
-                val += 1000 if c.islower() == isLower else -1000
-            else:
-                print('Unknown piece:', c)
-    return val
-
-# node là node hiện tại
-# depth là độ sâu
-# Pmax là player cần tìm Max
-# Pnow là player hiện tại
-
 
 def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': False,
                                               'R1': False, 'r2': False, 'R2': False}):
+    """
+    node là node hiện tại
+    depth là độ sâu
+    Pmax là player cần tìm Max
+    Pnow là player hiện tại\m
+    isMoved dùng để kiểm tra các quân xe, vua có di chuyển hay chưa để nhập thành
+    """
+    global totalNode
 
+    totalNode += 1
     if isFinish(node) or depth == 0:
-        return value(node, Pmax)
+        return reward(node, Pmax)
     if Pmax == Pnow:
         Max = -inf
         for row, col, newRow, newCol in CanGoList(node, Pnow, isMoved):

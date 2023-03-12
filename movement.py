@@ -1,5 +1,3 @@
-from setting import *
-
 liR = [(1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0)]
 liL = [(-1, 0), (-2, 0), (-3, 0), (-4, 0), (-5, 0), (-6, 0), (-7, 0)]
 liD = [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7)]
@@ -10,6 +8,14 @@ liRU = [(1, -1), (2, -2), (3, -3), (4, -4), (5, -5), (6, -6), (7, -7)]
 liLD = [(-1, 1), (-2, 2), (-3, 3), (-4, 4), (-5, 5), (-6, 6), (-7, 7)]
 liN = [(1, 2), (-1, 2), (1, -2), (-1, -2), (2, 1), (-2, 1), (2, -1), (-2, -1)]
 liK = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1)]
+chessBoard = [["r1", "n", "b", "q", "k", "b", "n", "r2"],
+              ["p", "p", "p", "p", "p", "p", "p", "p"],
+              [" ", " ", " ", " ", " ", " ", " ", " "],
+              [" ", " ", " ", " ", " ", " ", " ", " "],
+              [" ", " ", " ", " ", " ", " ", " ", " "],
+              [" ", " ", " ", " ", " ", " ", " ", " "],
+              ["P", "P", "P", "P", "P", "P", "P", "P"],
+              ["R1", "N", "B", "Q", "K", "B", "N", "R2"]]
 
 
 def Rr(chessboard, col, row):
@@ -32,7 +38,7 @@ def Nn(chessboard, col, row):
     return Go(chessboard, col, row, liN, isContinue=True)
 
 
-def Kk(chessboard, col, row, isMoved):
+def Kk(chessboard, col, row, isMoved=None):
     """Các nước có thể đi của quân Vua"""
     li = []
     li = li + Go(chessboard, col, row, liK, isContinue=True)
@@ -111,7 +117,7 @@ class CurrSelectedPiece:
         return f'curPiece: {self.curPiece} curPos: {self.curPos} canGoList: {self.canGoList}'
 
 
-def CanGoList(chessboard, isLower, isMoved):
+def CanGoList(chessboard, isLower, isMoved={}):
     """ return tất cả các nước có thể di chuyển (y,x) -> (y1,x1)"""
     li = []
     for row in range(8):
@@ -124,10 +130,10 @@ def CanGoList(chessboard, isLower, isMoved):
     return li
 
 
-def CanGo(chessboard, col, row, islower, isMoved={}):
+def CanGo(chessboard, col, row, isLower, isMoved={}):
     """Danh sách các vị trí có thể di chuyển của quân ở vị trí x, y"""
     piece = chessboard[row][col]
-    if piece.islower() != islower:
+    if piece.islower() != isLower:
         return []
     if 'r' in piece.lower():
         return Rr(chessboard, col, row)

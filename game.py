@@ -1,5 +1,6 @@
 from termcolor import colored
 from movement import *
+from setting import *
 
 
 class Game:
