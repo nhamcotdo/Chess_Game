@@ -19,15 +19,15 @@ class Game:
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         pygame.display.set_caption("Chess Game")
         # bot luôn là chữ thường
-        # chessBoard=[
-        #         ["r1", "n", "b", "q", "k", "b", "n", "r2"],
-        #         ["p", "p", "p", "p", "p", "p", "p", "p"],
-        #         [" ", " ", " ", " ", " ", " ", " ", " "],
-        #         [" ", " ", " ", " ", " ", " ", " ", " "],
-        #         [" ", " ", " ", " ", " ", " ", " ", " "],
-        #         [" ", " ", " ", " ", " ", " ", " ", " "],
-        #         ["P", "P", "p", "P", "P", "P", "P", "P"],
-        #         ["R1", "N", "B", "Q", "K", "B", "N", "R2"]]
+        chessBoard=[
+                [" ", " ", " ", " ", " ", "r1", "k", "r2"],
+                [" ", " ", " ", " ", " ", "p", "p", " "],
+                ["p", " ", " ", " ", "b", "b", " ", "p"],
+                [" ", "P", " ", "p", " ", " ", " ", "P"],
+                [" ", " ", "p", " ", " ", " ", "P", " "],
+                [" ", " ", "P", " ", "B", "P", " ", " "],
+                [" ", "P", "B", " ", " ", "P", " ", " "],
+                [" ", "K", " ", "R1", " ", " ", " ", "R2"]]
         
         self.chess_board = chessBoard
         self.curSelectedPiece = None

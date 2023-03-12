@@ -108,28 +108,28 @@ def value(board, isLower):
             if c == ' ':
                 continue
             if 'p' in c.lower():
-                val += 1 + \
+                val += 10 + \
                     pawnlower[y][x] if c.islower() == isLower else - \
-                    1 - pawnUpper[y][x]
+                    10 - pawnUpper[y][x]
 
             elif 'n' in c.lower():
-                val += 3 + \
+                val += 30 + \
                     knightEval[y][x] if c.islower() == isLower else - \
-                    3 - knightEval[y][x]
+                    30 - knightEval[y][x]
             elif 'b' in c.lower():
-                val += 3 + \
+                val += 30 + \
                     bishoplower[y][x] if c.islower() == isLower else - \
-                    3 - bishopUpper[y][x]
+                    30 - bishopUpper[y][x]
             elif 'r' in c.lower():
-                val += 5 + \
+                val += 50 + \
                     rooklower[y][x] if c.islower() == isLower else - \
-                    5 - rookUpper[y][x]
+                    50 - rookUpper[y][x]
             elif 'q' in c.lower():
-                val += 20 + \
+                val += 90 + \
                     evalQueen[y][x] if c.islower() == isLower else - \
-                    20 - evalQueen[y][x]
+                    90 - evalQueen[y][x]
             elif 'k' in c.lower():
-                val += 1000 + \
+                val += 900 + \
                     kingLower[y][x] if c.islower() == isLower else - \
                     1000 - kingUpper[y][x]
             else:
@@ -164,18 +164,18 @@ def matchStatus(board, isLower):
     if isLower:
         if (col, row) in enermyList:
             if canGosOfKing:
-                return 2
+                return 20
             else:
-                return 1000
+                return 900
         if not canGosOfKing:
-            return 1
+            return 10
     else:
         if (col, row) in enermyList:
             if canGosOfKing:
-                return -2
+                return -20
             else:
-                return -1000
+                return -900
         if not canGosOfKing:
-            return -1
+            return -10
 
     return 0
