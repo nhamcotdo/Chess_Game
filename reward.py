@@ -72,7 +72,7 @@ kingUpper = np.array([[-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
 kingLower = kingUpper[::-1]
 
 
-def reward(board, isLower, position={}):
+def Reward(board, isLower, position={}):
     global totalNodeInCache
     global totalNode
 

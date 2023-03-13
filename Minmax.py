@@ -91,7 +91,7 @@ def Minimax(node, depth, Pmax, Pnow, isMoved={'k': False, 'K': False, 'r1': Fals
 
     totalNode += 1
     if isFinish(node) or depth == 0:
-        return reward(node, Pmax, position=position)
+        return Reward(node, Pmax, position=position)
     if Pmax == Pnow:
         Max = -inf
         for row, col, newRow, newCol in CanGoList(node, Pnow, isMoved, position=position):

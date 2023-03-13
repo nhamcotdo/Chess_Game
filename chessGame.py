@@ -1,4 +1,4 @@
-from minmax import *
+from Minmax import *
 from game import *
 
 game = Game(True)

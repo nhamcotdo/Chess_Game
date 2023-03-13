@@ -15,9 +15,9 @@ class Game:
                  [" ", " ", " ", " ", " ", " ", " ", " "],
                  ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P9"],
                  ["R1", "N1", "B1", "Q", "K", "B2", "N2", "R2"]]) -> None:
-        pygame.init()
-        self.screen = pygame.display.set_mode((screen_width, screen_height))
-        pygame.display.set_caption("Chess Game")
+        # pygame.init()
+        # self.screen = pygame.display.set_mode((screen_width, screen_height))
+        # pygame.display.set_caption("Chess Game")
         # bot luôn là chữ thường
         # chessBoard=[
         #         ["r1", " ", " ", " ", "k", " ", " ", "r2"],
@@ -149,6 +149,7 @@ class Game:
             row1, col1 = 7, 7
             newRow, newCol = 7, 5
             self.chess_board[newRow][newCol] = self.chess_board[row1][col1]
+            self.pos[self.chess_board[row1][col1]] = (newRow, newCol)
             self.chess_board[row1][col1] = ' '
 
         if curPiece == 'K' and col - newCol == 2:
