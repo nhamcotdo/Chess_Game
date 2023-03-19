@@ -18,7 +18,7 @@ with open("./moves_cache.json", "r") as f:
         cache_moves = {'lower': {}, 'upper': {}, 'eval': {}}
 
 
-def CPUMiniMaxTurn(board, islower, isMoved, depth=2, position={}):
+def CPUMiniMaxTurn(board, islower, isMoved, depth=4, position={}):
     global totalNode
     global totalNodeInCache
     global cache_moves

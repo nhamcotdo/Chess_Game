@@ -10,8 +10,7 @@ while running:
     for event in pygame.event.get():
         if not game.isBotTurn:
             print('Caculating..........')
-            row, col, newRow, newCol, pawnPro = CPUMiniMaxTurn(
-                game.chess_board.copy(), game.isBotTurn, game.isMoved.copy(), position=game.pos.copy(), depth=random.choice([2,3,4]))
+            row, col, newRow, newCol = random.choice(CanGoList(game.chess_board.copy(),isLower=game.isBotTurn,isMoved=game.isMoved,position=game.pos))
             # print(row, col, newCol, newRow, pawnPro)
             print(game.pos)
             game.makeMove(row, col, newRow, newCol, pawnPro)
